@@ -1,19 +1,28 @@
-build-and-test:
-  runs-on: ubuntu-latest
-  steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+name: Note App CI/CD Pipeline
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: 18
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
 
-    - name: Install dependencies
-      run: npm install --include=dev
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-    - name: Fix Jest permissions
-      run: chmod +x ./node_modules/.bin/jest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Run tests
-      run: npx jest --verbose
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+      - name: Security audit
+        run: npm audit --audit-level=high
